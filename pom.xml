@@ -24,6 +24,7 @@
     </properties>
 
     <modules>
+        <module>contrat</module>
         <module>api</module>
         <!-- le module contrat est ajoute au TP02 -->
     </modules>

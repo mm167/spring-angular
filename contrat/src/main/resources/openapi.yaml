@@ -1,0 +1,9 @@
+openapi: 3.0.3
+info:
+  title: API de location de matériel
+  description: Contrat de l'API du fil rouge (matériels et réservations).
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Poste local
+paths: {}
