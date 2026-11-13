@@ -6,4 +6,221 @@ info:
 servers:
   - url: http://localhost:8080
     description: Poste local
-paths: {}
+paths:
+  /api/materiels:
+    get:
+      tags: [ materiels ]
+      operationId: listerMateriels
+      summary: Lister les matériels
+      responses:
+        '200':
+          description: Liste des matériels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Materiel'
+    post:
+      tags: [ materiels ]
+      operationId: creerMateriel
+      summary: Créer un matériel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NouveauMateriel'
+      responses:
+        '201':
+          description: Matériel créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Materiel'
+        '400':
+          $ref: '#/components/responses/RequeteInvalide'
+  /api/materiels/{id}:
+    get:
+      tags: [ materiels ]
+      operationId: consulterMateriel
+      summary: Consulter un matériel
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Le matériel demandé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Materiel'
+        '404':
+          $ref: '#/components/responses/NonTrouve'
+  /api/reservations:
+    get:
+      tags: [reservations]
+      operationId: listerReservations
+      summary: Lister les réservations
+      responses:
+        '200':
+          description: Liste des réservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+    post:
+      tags: [reservations]
+      operationId: creerReservation
+      summary: Créer une réservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NouvelleReservation'
+      responses:
+        '201':
+          description: Réservation créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '400':
+          $ref: '#/components/responses/RequeteInvalide'
+        '404':
+          $ref: '#/components/responses/NonTrouve'
+        '409':
+          $ref: '#/components/responses/Conflit'
+  /api/reservations/{id}:
+    delete:
+      tags: [reservations]
+      operationId: annulerReservation
+      summary: Annuler une réservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Réservation annulée
+        '404':
+          $ref: '#/components/responses/NonTrouve'
+components:
+  schemas:
+    Categorie:
+      type: string
+      enum: [MINI_PELLE, NACELLE, COMPACTEUR]
+    Materiel:
+      type: object
+      required: [id, nom, categorie, tarifJournalier]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nom:
+          type: string
+          example: Mini-pelle 1,5 t
+        categorie:
+          $ref: '#/components/schemas/Categorie'
+        tarifJournalier:
+          type: number
+          format: double
+          example: 180.0
+    NouveauMateriel:
+      type: object
+      required: [nom, categorie, tarifJournalier]
+      properties:
+        nom:
+          type: string
+          minLength: 1
+          example: Mini-pelle 1,5 t
+        categorie:
+          $ref: '#/components/schemas/Categorie'
+        tarifJournalier:
+          type: number
+          format: double
+          minimum: 0
+          example: 180.0
+    Reservation:
+      type: object
+      required: [id, materielId, client, dateDebut, dateFin]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        materielId:
+          type: integer
+          format: int64
+          example: 1
+        client:
+          type: string
+          example: Entreprise Durand
+        dateDebut:
+          type: string
+          format: date
+          example: 2026-12-01
+        dateFin:
+          type: string
+          format: date
+          example: 2026-12-05
+    NouvelleReservation:
+      type: object
+      required: [materielId, client, dateDebut, dateFin]
+      properties:
+        materielId:
+          type: integer
+          format: int64
+          example: 1
+        client:
+          type: string
+          minLength: 1
+          example: Entreprise Durand
+        dateDebut:
+          type: string
+          format: date
+          example: 2026-12-01
+        dateFin:
+          type: string
+          format: date
+          example: 2026-12-05
+    Erreur:
+      type: object
+      required: [status, message]
+      properties:
+        status:
+          type: integer
+          example: 409
+        message:
+          type: string
+          example: Le matériel est déjà réservé sur cette période.
+  responses:
+    RequeteInvalide:
+      description: Requête invalide
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    NonTrouve:
+      description: Ressource introuvable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Conflit:
+      description: Période déjà réservée pour ce matériel
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
