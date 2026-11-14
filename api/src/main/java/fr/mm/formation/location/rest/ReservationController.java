@@ -5,7 +5,11 @@ import java.util.List;
 import fr.mm.formation.location.contrat.api.ReservationsApi;
 import fr.mm.formation.location.contrat.modele.NouvelleReservation;
 import fr.mm.formation.location.contrat.modele.Reservation;
+import fr.mm.formation.location.depot.MaterielDepot;
 import fr.mm.formation.location.depot.ReservationDepot;
+import fr.mm.formation.location.erreurs.ChevauchementException;
+import fr.mm.formation.location.erreurs.MaterielIntrouvableException;
+import fr.mm.formation.location.erreurs.ReservationIntrouvableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReservationController implements ReservationsApi {
 
     private final ReservationDepot depot;
+    private final MaterielDepot materielDepot;
 
-    public ReservationController(ReservationDepot depot) {
+    public ReservationController(ReservationDepot depot, MaterielDepot materielDepot) {
         this.depot = depot;
+        this.materielDepot = materielDepot;
     }
 
     @Override
@@ -26,14 +32,28 @@ public class ReservationController implements ReservationsApi {
 
     @Override
     public ResponseEntity<Reservation> creerReservation(NouvelleReservation nouvelleReservation) {
+        Long materielId = nouvelleReservation.getMaterielId();
+        materielDepot.trouver(materielId)
+                .orElseThrow(() -> new MaterielIntrouvableException(materielId));
+        verifierDisponibilite(nouvelleReservation);
         return ResponseEntity.status(HttpStatus.CREATED).body(depot.creer(nouvelleReservation));
     }
 
     @Override
     public ResponseEntity<Void> annulerReservation(Long id) {
-        if (depot.supprimer(id)) {
-            return ResponseEntity.noContent().build();
+        if (!depot.supprimer(id)) {
+            throw new ReservationIntrouvableException(id);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    private void verifierDisponibilite(NouvelleReservation demande) {
+        boolean chevauchement = depot.lister().stream()
+                .filter(reservation -> reservation.getMaterielId().equals(demande.getMaterielId()))
+                .anyMatch(reservation -> demande.getDateDebut().isBefore(reservation.getDateFin())
+                        && reservation.getDateDebut().isBefore(demande.getDateFin()));
+        if (chevauchement) {
+            throw new ChevauchementException(demande.getMaterielId());
+        }
     }
 }

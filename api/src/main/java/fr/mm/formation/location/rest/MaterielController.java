@@ -6,6 +6,7 @@ import fr.mm.formation.location.contrat.api.MaterielsApi;
 import fr.mm.formation.location.contrat.modele.Materiel;
 import fr.mm.formation.location.contrat.modele.NouveauMateriel;
 import fr.mm.formation.location.depot.MaterielDepot;
+import fr.mm.formation.location.erreurs.MaterielIntrouvableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +34,6 @@ public class MaterielController implements MaterielsApi {
     public ResponseEntity<Materiel> consulterMateriel(Long id) {
         return depot.trouver(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new MaterielIntrouvableException(id));
     }
 }
