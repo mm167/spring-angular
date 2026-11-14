@@ -32,6 +32,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
             <groupId>fr.mm.formation</groupId>
             <artifactId>location-contrat</artifactId>
             <version>${project.version}</version>
