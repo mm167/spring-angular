@@ -1,0 +1,20 @@
+<h2>Matériels</h2>
+<button type="button" (click)="ajouter()">Ajouter une nacelle</button>
+<p>Total : {{ (materiels$ | async)?.length }}</p>
+@if (materiels$ | async; as materiels) {
+  <p>{{ materiels.length }} matériel(s)</p>
+  <table>
+    <thead>
+    <tr><th>Nom</th><th>Catégorie</th><th>Tarif journalier</th></tr>
+    </thead>
+    <tbody>
+      @for (materiel of materiels; track materiel.id) {
+        <tr>
+          <td>{{ materiel.nom }}</td>
+          <td>{{ materiel.categorie | categorie }}</td>
+          <td>{{ materiel.tarifJournalier | currency: 'EUR' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
