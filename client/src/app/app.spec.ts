@@ -1,18 +1,30 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { of, Subject } from 'rxjs';
+
 import { App } from './app';
+import { MaterielService } from './materiel/materiel.service';
+import { ReservationService } from './reservation/reservation.service';
+import { ReservationsEvenementsService } from './websocket/reservations-evenements.service';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-    })
-      .compileComponents();
+      providers: [
+        { provide: MaterielService, useValue: { lister: () => of([]) } },
+        { provide: ReservationService, useValue: { lister: () => of([]) } },
+        {
+          provide: ReservationsEvenementsService,
+          useValue: { evenements$: new Subject(), connecte: signal(false) },
+        },
+      ],
+    }).compileComponents();
   });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   it('should render title', async () => {
