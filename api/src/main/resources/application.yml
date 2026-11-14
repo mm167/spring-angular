@@ -1,6 +1,9 @@
 spring:
   application:
     name: location-api
+  jackson:
+    serialization:
+      indent-output: true
 
 server:
   port: 8080
