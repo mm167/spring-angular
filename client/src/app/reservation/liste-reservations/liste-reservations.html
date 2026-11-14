@@ -8,6 +8,8 @@
   <button (click)="annuler(999)">Annuler : réservation inconnue</button>
 </p>
 <p>{{ message() }}</p>
+<p>Canal : {{ connecte() ? 'connecté' : 'déconnecté' }}</p>
+<p>Dernier événement : {{ dernierEvenement() }}</p>
 @if (reservations$ | async; as reservations) {
   <table>
     <thead>

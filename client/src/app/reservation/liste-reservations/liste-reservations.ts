@@ -6,6 +6,9 @@ import { NouvelleReservation } from '../../api';
 import { messageErreur } from '../../erreurs/message-erreur';
 import { ReservationService } from '../reservation.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReservationsEvenementsService } from '../../websocket/reservations-evenements.service';
+
 @Component({
   selector: 'app-liste-reservations',
   imports: [AsyncPipe],
@@ -20,6 +23,18 @@ export class ListeReservations {
   );
 
   protected readonly message = signal('');
+
+  private readonly evenements = inject(ReservationsEvenementsService);
+
+  protected readonly connecte = this.evenements.connecte;
+  protected readonly dernierEvenement = signal('aucun');
+
+  constructor() {
+    this.evenements.evenements$.pipe(takeUntilDestroyed()).subscribe((evenement) => {
+      this.dernierEvenement.set(evenement.type);
+      this.rechargement$.next();
+    });
+  }
 
   protected readonly libre: NouvelleReservation = {
     materielId: 2,
