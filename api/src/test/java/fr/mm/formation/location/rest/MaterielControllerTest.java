@@ -17,7 +17,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
+import fr.mm.formation.location.securite.ReponsesErreurSecurite;
+import fr.mm.formation.location.securite.SecuriteConfig;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.context.support.WithMockUser;
+
 @WebMvcTest(MaterielController.class)
+@Import({SecuriteConfig.class, ReponsesErreurSecurite.class})
+@WithMockUser(roles = "GESTIONNAIRE")
 class MaterielControllerTest {
 
     @Autowired
@@ -25,6 +33,9 @@ class MaterielControllerTest {
 
     @MockitoBean
     private MaterielDepot depot;
+
+    @MockitoBean
+    private JwtDecoder jwtDecoder;
 
     @Test
     void listerRetourneLesMateriels() {

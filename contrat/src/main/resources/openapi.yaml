@@ -1,17 +1,43 @@
 openapi: 3.0.3
 info:
   title: API de location de matériel
-  description: Contrat de l'API du fil rouge (matériels et réservations).
-  version: 1.0.0
+  description: Contrat de l'API du fil rouge (matériels, réservations et authentification).
+  version: 1.1.0
 servers:
   - url: http://localhost:8080
     description: Poste local
+security:
+  - bearerAuth: []
 paths:
+  /api/auth/login:
+    post:
+      tags: [authentification]
+      operationId: seConnecter
+      summary: Obtenir un jeton d'accès
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Identifiants'
+      responses:
+        '200':
+          description: Jeton d'accès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jeton'
+        '400':
+          $ref: '#/components/responses/RequeteInvalide'
+        '401':
+          $ref: '#/components/responses/NonAuthentifie'
   /api/materiels:
     get:
-      tags: [ materiels ]
+      tags: [materiels]
       operationId: listerMateriels
       summary: Lister les matériels
+      security: []
       responses:
         '200':
           description: Liste des matériels
@@ -22,7 +48,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Materiel'
     post:
-      tags: [ materiels ]
+      tags: [materiels]
       operationId: creerMateriel
       summary: Créer un matériel
       requestBody:
@@ -40,11 +66,16 @@ paths:
                 $ref: '#/components/schemas/Materiel'
         '400':
           $ref: '#/components/responses/RequeteInvalide'
+        '401':
+          $ref: '#/components/responses/NonAuthentifie'
+        '403':
+          $ref: '#/components/responses/Interdit'
   /api/materiels/{id}:
     get:
-      tags: [ materiels ]
+      tags: [materiels]
       operationId: consulterMateriel
       summary: Consulter un matériel
+      security: []
       parameters:
         - name: id
           in: path
@@ -75,6 +106,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Reservation'
+        '401':
+          $ref: '#/components/responses/NonAuthentifie'
     post:
       tags: [reservations]
       operationId: creerReservation
@@ -94,6 +127,8 @@ paths:
                 $ref: '#/components/schemas/Reservation'
         '400':
           $ref: '#/components/responses/RequeteInvalide'
+        '401':
+          $ref: '#/components/responses/NonAuthentifie'
         '404':
           $ref: '#/components/responses/NonTrouve'
         '409':
@@ -113,9 +148,18 @@ paths:
       responses:
         '204':
           description: Réservation annulée
+        '401':
+          $ref: '#/components/responses/NonAuthentifie'
+        '403':
+          $ref: '#/components/responses/Interdit'
         '404':
           $ref: '#/components/responses/NonTrouve'
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Categorie:
       type: string
@@ -195,6 +239,34 @@ components:
           type: string
           format: date
           example: 2026-12-05
+    Identifiants:
+      type: object
+      required: [identifiant, motDePasse]
+      properties:
+        identifiant:
+          type: string
+          minLength: 1
+          example: durand
+        motDePasse:
+          type: string
+          minLength: 1
+          example: durand123
+    Jeton:
+      type: object
+      required: [jetonAcces, expireDans, roles]
+      properties:
+        jetonAcces:
+          type: string
+          description: Jeton JWT à placer dans l'en-tête Authorization (schéma Bearer).
+        expireDans:
+          type: integer
+          description: Durée de validité du jeton, en secondes.
+          example: 900
+        roles:
+          type: array
+          items:
+            type: string
+          example: [CLIENT]
     Erreur:
       type: object
       required: [status, message]
@@ -208,6 +280,18 @@ components:
   responses:
     RequeteInvalide:
       description: Requête invalide
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    NonAuthentifie:
+      description: Authentification absente, invalide ou expirée
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Interdit:
+      description: Droits insuffisants pour cette opération
       content:
         application/json:
           schema:

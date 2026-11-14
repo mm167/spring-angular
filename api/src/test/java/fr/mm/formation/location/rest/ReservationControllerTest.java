@@ -26,7 +26,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
+import fr.mm.formation.location.securite.ReponsesErreurSecurite;
+import fr.mm.formation.location.securite.SecuriteConfig;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.context.support.WithMockUser;
+
 @WebMvcTest(ReservationController.class)
+@Import({SecuriteConfig.class, ReponsesErreurSecurite.class})
+@WithMockUser(roles = "GESTIONNAIRE")
 class ReservationControllerTest {
 
     private static final String DEMANDE = "{\"materielId\":1,\"client\":\"Entreprise Martin\","
@@ -40,6 +48,9 @@ class ReservationControllerTest {
 
     @MockitoBean
     private MaterielDepot materielDepot;
+
+    @MockitoBean
+    private JwtDecoder jwtDecoder;
 
     @MockitoBean
     private ReservationsWebSocketHandler notifications;

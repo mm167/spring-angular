@@ -6,6 +6,7 @@ import fr.mm.formation.location.contrat.modele.Erreur;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,6 +35,11 @@ public class GestionnaireErreurs {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Erreur> corpsIllisible(HttpMessageNotReadableException exception) {
         return reponse(HttpStatus.BAD_REQUEST, "Corps de la requête illisible ou invalide.");
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Erreur> identifiantsIncorrects(BadCredentialsException exception) {
+        return reponse(HttpStatus.UNAUTHORIZED, "Identifiant ou mot de passe incorrect.");
     }
 
     private ResponseEntity<Erreur> reponse(HttpStatus statut, String message) {
