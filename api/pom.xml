@@ -28,6 +28,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>fr.mm.formation</groupId>
+            <artifactId>location-contrat</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
