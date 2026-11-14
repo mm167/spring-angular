@@ -1,0 +1,29 @@
+<h2>Réservations</h2>
+
+<p>
+  <button (click)="reserver(libre)">Réserver : période libre</button>
+  <button (click)="reserver(chevauchement)">Réserver : période déjà prise</button>
+  <button (click)="reserver(materielInconnu)">Réserver : matériel inconnu</button>
+  <button (click)="reserver(clientVide)">Réserver : client vide</button>
+  <button (click)="annuler(999)">Annuler : réservation inconnue</button>
+</p>
+
+@if (reservations$ | async; as reservations) {
+  <table>
+    <thead>
+    <tr><th>N°</th><th>Matériel</th><th>Client</th><th>Du</th><th>Au</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (reservation of reservations; track reservation.id) {
+        <tr>
+          <td>{{ reservation.id }}</td>
+          <td>{{ reservation.materielId }}</td>
+          <td>{{ reservation.client }}</td>
+          <td>{{ reservation.dateDebut }}</td>
+          <td>{{ reservation.dateFin }}</td>
+          <td><button (click)="annuler(reservation.id)">Annuler</button></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

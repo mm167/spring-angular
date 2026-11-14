@@ -2,9 +2,10 @@ import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {Hello} from './hello/hello';
 import { ListeMateriels } from './materiel/liste-materiels/liste-materiels';
+import { ListeReservations } from './reservation/liste-reservations/liste-reservations';
 
 @Component({
-  imports: [RouterOutlet, Hello,ListeMateriels],
+  imports: [RouterOutlet, Hello,ListeMateriels, ListeReservations],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
