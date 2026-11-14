@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { BehaviorSubject, switchMap } from 'rxjs';
 
 import { NouvelleReservation } from '../../api';
+import { messageErreur } from '../../erreurs/message-erreur';
 import { ReservationService } from '../reservation.service';
 
 @Component({
@@ -17,6 +18,8 @@ export class ListeReservations {
   protected readonly reservations$ = this.rechargement$.pipe(
     switchMap(() => this.service.lister()),
   );
+
+  protected readonly message = signal('');
 
   protected readonly libre: NouvelleReservation = {
     materielId: 2,
@@ -44,10 +47,22 @@ export class ListeReservations {
   };
 
   protected reserver(demande: NouvelleReservation): void {
-    this.service.creer(demande).subscribe({ next: () => this.rechargement$.next() });
+    this.service.creer(demande).subscribe({
+      next: () => {
+        this.message.set('Réservation créée.');
+        this.rechargement$.next();
+      },
+      error: (erreur) => this.message.set(messageErreur(erreur)),
+    });
   }
 
   protected annuler(id: number): void {
-    this.service.annuler(id).subscribe({ next: () => this.rechargement$.next() });
+    this.service.annuler(id).subscribe({
+      next: () => {
+        this.message.set('Réservation annulée.');
+        this.rechargement$.next();
+      },
+      error: (erreur) => this.message.set(messageErreur(erreur)),
+    });
   }
 }
