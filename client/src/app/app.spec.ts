@@ -7,11 +7,14 @@ import { MaterielService } from './materiel/materiel.service';
 import { ReservationService } from './reservation/reservation.service';
 import { ReservationsEvenementsService } from './websocket/reservations-evenements.service';
 
+import { AuthentificationService } from './api';
+
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        { provide: AuthentificationService, useValue: {} },
         { provide: MaterielService, useValue: { lister: () => of([]) } },
         { provide: ReservationService, useValue: { lister: () => of([]) } },
         {

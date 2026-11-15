@@ -1,8 +1,8 @@
 # @
 
-Contrat de l\'API du fil rouge (matériels et réservations).
+Contrat de l\'API du fil rouge (matériels, réservations et authentification).
 
-The version of the OpenAPI document: 1.0.0
+The version of the OpenAPI document: 1.1.0
 
 ## Building
 

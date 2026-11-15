@@ -1,9 +1,9 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 api.base.service.ts
 api.module.ts
 api/api.ts
+api/authentification.service.ts
 api/materiels.service.ts
 api/reservations.service.ts
 configuration.ts
@@ -12,6 +12,8 @@ git_push.sh
 index.ts
 model/categorie.ts
 model/erreur.ts
+model/identifiants.ts
+model/jeton.ts
 model/materiel.ts
 model/models.ts
 model/nouveau-materiel.ts
