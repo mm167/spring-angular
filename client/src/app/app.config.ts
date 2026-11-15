@@ -5,6 +5,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { journalInterceptor } from './config/journal.interceptor';
+import { authInterceptor } from './securite/auth.interceptor';
 
 registerLocaleData(localeFr);
 
@@ -12,7 +13,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     { provide: LOCALE_ID, useValue: 'fr' },
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptors([journalInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, journalInterceptor])),
     provideRouter(routes)
   ]
 };

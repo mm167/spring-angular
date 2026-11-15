@@ -1,10 +1,7 @@
 <h2>Connexion</h2>
 
 @if (session.connecte()) {
-  <p>
-    Connecté : {{ session.identifiant() }} ({{ session.roles().join(', ') }})
-    <button type="button" (click)="seDeconnecter()">Se déconnecter</button>
-  </p>
+  <p>Vous êtes connecté.</p>
 } @else {
   <form novalidate (submit)="seConnecter($event)">
     <label>Identifiant <input type="text" [formField]="formulaire.identifiant" /></label>

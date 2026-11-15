@@ -1,16 +1,20 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {Hello} from './hello/hello';
-import { ListeMateriels } from './materiel/liste-materiels/liste-materiels';
-import { ListeReservations } from './reservation/liste-reservations/liste-reservations';
-import { Connexion } from './securite/connexion/connexion';
+import {Component, inject, signal} from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { SessionService } from './securite/session.service';
 
 @Component({
-  imports: [RouterOutlet, Hello,ListeMateriels, ListeReservations, Connexion],
+  imports: [RouterOutlet, RouterLink],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
   protected readonly title = signal('location-client');
+  protected readonly session = inject(SessionService);
+  private readonly router = inject(Router);
+
+  protected deconnecter(): void {
+    this.session.fermer();
+    void this.router.navigateByUrl('/connexion');
+  }
 }

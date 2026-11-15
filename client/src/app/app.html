@@ -1,9 +1,22 @@
 <main>
   <h1>{{ title() }}</h1>
-  <p>Point de départ du fil rouge Spring Boot / Angular.</p>
-  <app-hello></app-hello>
-  <app-connexion />
-  <app-liste-materiels />
-  <app-liste-reservations />
+
+  <nav>
+    <a routerLink="/materiels">Matériels</a>
+    |
+    <a routerLink="/reservations">Réservations</a>
+    |
+    <a routerLink="/connexion">Connexion</a>
+  </nav>
+
+  @if (session.connecte()) {
+    <p>
+      Connecté : {{ session.identifiant() }} ({{ session.roles().join(', ') }})
+      <button type="button" (click)="deconnecter()">Se déconnecter</button>
+    </p>
+  } @else {
+    <p>Non connecté</p>
+  }
+
   <router-outlet />
 </main>

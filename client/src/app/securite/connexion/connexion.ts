@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthentificationService } from '../../api';
 import { messageErreur } from '../../erreurs/message-erreur';
@@ -12,6 +13,8 @@ import { SessionService } from '../session.service';
 })
 export class Connexion {
   private readonly authentification = inject(AuthentificationService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   protected readonly session = inject(SessionService);
 
   private readonly saisie = signal({ identifiant: '', motDePasse: '' });
@@ -34,13 +37,14 @@ export class Connexion {
         this.session.ouvrir(identifiant, jeton);
         this.saisie.set({ identifiant: '', motDePasse: '' });
         this.message.set('');
+        void this.router.navigateByUrl(this.destination());
       },
       error: (erreur) => this.message.set(messageErreur(erreur)),
     });
   }
 
-  protected seDeconnecter(): void {
-    this.session.fermer();
-    this.message.set('');
+  private destination(): string {
+    const retour = this.route.snapshot.queryParamMap.get('retour');
+    return retour && retour.startsWith('/') && !retour.startsWith('//') ? retour : '/reservations';
   }
 }

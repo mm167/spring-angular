@@ -8,12 +8,14 @@ import { ReservationService } from './reservation/reservation.service';
 import { ReservationsEvenementsService } from './websocket/reservations-evenements.service';
 
 import { AuthentificationService } from './api';
+import { provideRouter } from '@angular/router';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        provideRouter([]),
         { provide: AuthentificationService, useValue: {} },
         { provide: MaterielService, useValue: { lister: () => of([]) } },
         { provide: ReservationService, useValue: { lister: () => of([]) } },
