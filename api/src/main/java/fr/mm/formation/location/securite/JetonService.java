@@ -4,8 +4,12 @@ import java.time.Instant;
 import java.util.List;
 
 import fr.mm.formation.location.contrat.modele.Jeton;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -20,10 +24,15 @@ public class JetonService {
 
     private final JwtEncoder encodeur;
     private final SecuriteProprietes proprietes;
+    private final JetonsRafraichissement jetonsRafraichissement;
+    private final UserDetailsService comptes;
 
-    public JetonService(JwtEncoder encodeur, SecuriteProprietes proprietes) {
+    public JetonService(JwtEncoder encodeur, SecuriteProprietes proprietes,
+                        JetonsRafraichissement jetonsRafraichissement, UserDetailsService comptes) {
         this.encodeur = encodeur;
         this.proprietes = proprietes;
+        this.jetonsRafraichissement = jetonsRafraichissement;
+        this.comptes = comptes;
     }
 
     public Jeton emettre(Authentication authentification) {
@@ -44,8 +53,22 @@ public class JetonService {
 
         Jeton jeton = new Jeton();
         jeton.setJetonAcces(valeur);
+        jeton.setJetonRafraichissement(jetonsRafraichissement.emettre(authentification.getName()));
         jeton.setExpireDans((int) proprietes.dureeJeton().toSeconds());
         jeton.setRoles(roles);
         return jeton;
+    }
+
+    public Jeton rafraichir(String jetonRafraichissement) {
+        String identifiant = jetonsRafraichissement.consommer(jetonRafraichissement)
+                .orElseThrow(RafraichissementRefuseException::new);
+        UserDetails compte;
+        try {
+            compte = comptes.loadUserByUsername(identifiant);
+        } catch (UsernameNotFoundException exception) {
+            throw new RafraichissementRefuseException();
+        }
+        return emettre(UsernamePasswordAuthenticationToken.authenticated(
+                compte.getUsername(), null, compte.getAuthorities()));
     }
 }

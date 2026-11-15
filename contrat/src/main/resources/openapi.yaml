@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: API de location de matériel
   description: Contrat de l'API du fil rouge (matériels, réservations et authentification).
-  version: 1.1.0
+  version: 1.2.0
 servers:
   - url: http://localhost:8080
     description: Poste local
@@ -24,6 +24,29 @@ paths:
       responses:
         '200':
           description: Jeton d'accès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jeton'
+        '400':
+          $ref: '#/components/responses/RequeteInvalide'
+        '401':
+          $ref: '#/components/responses/NonAuthentifie'
+  /api/auth/rafraichir:
+    post:
+      tags: [ authentification ]
+      operationId: rafraichir
+      summary: Obtenir une nouvelle paire de jetons
+      security: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DemandeRafraichissement'
+      responses:
+        '200':
+          description: Nouvelle paire de jetons
           content:
             application/json:
               schema:
@@ -253,20 +276,30 @@ components:
           example: durand123
     Jeton:
       type: object
-      required: [jetonAcces, expireDans, roles]
+      required: [ jetonAcces, jetonRafraichissement, expireDans, roles ]
       properties:
         jetonAcces:
           type: string
           description: Jeton JWT à placer dans l'en-tête Authorization (schéma Bearer).
+        jetonRafraichissement:
+          type: string
+          description: Jeton opaque à envoyer à /api/auth/rafraichir. Il ne sert qu'une fois.
         expireDans:
           type: integer
-          description: Durée de validité du jeton, en secondes.
+          description: Durée de validité du jeton d'accès, en secondes.
           example: 900
         roles:
           type: array
           items:
             type: string
-          example: [CLIENT]
+          example: [ CLIENT ]
+    DemandeRafraichissement:
+      type: object
+      required: [ jetonRafraichissement ]
+      properties:
+        jetonRafraichissement:
+          type: string
+          minLength: 1
     Erreur:
       type: object
       required: [status, message]

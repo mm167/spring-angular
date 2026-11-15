@@ -11,6 +11,7 @@ encoder.ts
 git_push.sh
 index.ts
 model/categorie.ts
+model/demande-rafraichissement.ts
 model/erreur.ts
 model/identifiants.ts
 model/jeton.ts

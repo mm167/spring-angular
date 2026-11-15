@@ -3,8 +3,18 @@ import { TestBed } from '@angular/core/testing';
 import { Jeton } from '../api';
 import { CLE_SESSION, SessionService } from './session.service';
 
-const jetonClient: Jeton = { jetonAcces: 'a.b.c', expireDans: 900, roles: ['CLIENT'] };
-const jetonGestion: Jeton = { jetonAcces: 'd.e.f', expireDans: 900, roles: ['GESTIONNAIRE'] };
+const jetonClient: Jeton = {
+  jetonAcces: 'a.b.c',
+  jetonRafraichissement: 'r1',
+  expireDans: 900,
+  roles: ['CLIENT'],
+};
+const jetonGestion: Jeton = {
+  jetonAcces: 'd.e.f',
+  jetonRafraichissement: 'r2',
+  expireDans: 900,
+  roles: ['GESTIONNAIRE'],
+};
 
 describe('SessionService', () => {
   beforeEach(() => {

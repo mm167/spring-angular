@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
+import fr.mm.formation.location.contrat.modele.DemandeRafraichissement;
 
 @RestController
 public class AuthentificationController implements AuthentificationApi {
@@ -27,5 +28,10 @@ public class AuthentificationController implements AuthentificationApi {
                 UsernamePasswordAuthenticationToken.unauthenticated(
                         identifiants.getIdentifiant(), identifiants.getMotDePasse()));
         return ResponseEntity.ok(jetons.emettre(authentification));
+    }
+
+    @Override
+    public ResponseEntity<Jeton> rafraichir(DemandeRafraichissement demande) {
+        return ResponseEntity.ok(jetons.rafraichir(demande.getJetonRafraichissement()));
     }
 }

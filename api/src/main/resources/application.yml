@@ -16,3 +16,4 @@ location:
   securite:
     secret: secret-de-demonstration-du-cours-location-2026
     duree-jeton: 15m
+    duree-rafraichissement: 8h

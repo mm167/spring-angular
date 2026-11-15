@@ -15,7 +15,11 @@ export interface Jeton {
      */
     jetonAcces: string;
     /**
-     * Durée de validité du jeton, en secondes.
+     * Jeton opaque à envoyer à /api/auth/rafraichir. Il ne sert qu\'une fois.
+     */
+    jetonRafraichissement: string;
+    /**
+     * Durée de validité du jeton d\'accès, en secondes.
      */
     expireDans: number;
     roles: Array<string>;

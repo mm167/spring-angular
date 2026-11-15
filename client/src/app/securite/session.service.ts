@@ -26,6 +26,7 @@ export class SessionService {
   readonly identifiant = computed(() => this.session()?.identifiant ?? '');
   readonly roles = computed(() => this.session()?.jeton.roles ?? []);
   readonly jetonAcces = computed(() => this.session()?.jeton.jetonAcces ?? null);
+  readonly jetonRafraichissement = computed(() => this.session()?.jeton.jetonRafraichissement ?? null);
   readonly estGestionnaire = computed(() => this.roles().includes('GESTIONNAIRE'));
 
   ouvrir(identifiant: string, jeton: Jeton): void {
@@ -37,5 +38,12 @@ export class SessionService {
   fermer(): void {
     this.session.set(null);
     sessionStorage.removeItem(CLE_SESSION);
+  }
+
+  remplacerJeton(jeton: Jeton): void {
+    const actuelle = this.session();
+    if (actuelle) {
+      this.ouvrir(actuelle.identifiant, jeton);
+    }
   }
 }

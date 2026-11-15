@@ -1,4 +1,5 @@
 export * from './categorie';
+export * from './demande-rafraichissement';
 export * from './erreur';
 export * from './identifiants';
 export * from './jeton';

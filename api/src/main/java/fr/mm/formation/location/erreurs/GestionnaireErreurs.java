@@ -3,6 +3,7 @@ package fr.mm.formation.location.erreurs;
 import java.util.stream.Collectors;
 
 import fr.mm.formation.location.contrat.modele.Erreur;
+import fr.mm.formation.location.securite.RafraichissementRefuseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -40,6 +41,11 @@ public class GestionnaireErreurs {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Erreur> identifiantsIncorrects(BadCredentialsException exception) {
         return reponse(HttpStatus.UNAUTHORIZED, "Identifiant ou mot de passe incorrect.");
+    }
+
+    @ExceptionHandler(RafraichissementRefuseException.class)
+    public ResponseEntity<Erreur> rafraichissementRefuse(RafraichissementRefuseException exception) {
+        return reponse(HttpStatus.UNAUTHORIZED, exception.getMessage());
     }
 
     private ResponseEntity<Erreur> reponse(HttpStatus statut, String message) {
