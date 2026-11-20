@@ -4,6 +4,13 @@ spring:
   jackson:
     serialization:
       indent-output: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/location
+    username: location
+    password: location
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 server:
   port: 8080
