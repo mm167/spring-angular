@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: API de location de matériel
   description: Contrat de l'API du fil rouge (matériels, réservations et authentification).
-  version: 1.2.0
+  version: 1.3.0
 servers:
   - url: http://localhost:8080
     description: Poste local
@@ -55,6 +55,29 @@ paths:
           $ref: '#/components/responses/RequeteInvalide'
         '401':
           $ref: '#/components/responses/NonAuthentifie'
+  /api/auth/inscription:
+    post:
+      tags: [authentification]
+      operationId: inscrire
+      summary: Créer un compte client
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inscription'
+      responses:
+        '201':
+          description: Compte créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompteCree'
+        '400':
+          $ref: '#/components/responses/RequeteInvalide'
+        '409':
+          $ref: '#/components/responses/IdentifiantPris'
   /api/materiels:
     get:
       tags: [materiels]
@@ -300,6 +323,30 @@ components:
         jetonRafraichissement:
           type: string
           minLength: 1
+    Inscription:
+      type: object
+      required: [identifiant, motDePasse]
+      properties:
+        identifiant:
+          type: string
+          minLength: 3
+          maxLength: 50
+          example: martin
+        motDePasse:
+          type: string
+          minLength: 8
+          maxLength: 72
+          example: motdepasse1
+    CompteCree:
+      type: object
+      required: [identifiant, role]
+      properties:
+        identifiant:
+          type: string
+          example: martin
+        role:
+          type: string
+          example: CLIENT
     Erreur:
       type: object
       required: [status, message]
@@ -331,6 +378,12 @@ components:
             $ref: '#/components/schemas/Erreur'
     NonTrouve:
       description: Ressource introuvable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    IdentifiantPris:
+      description: Identifiant déjà utilisé
       content:
         application/json:
           schema:

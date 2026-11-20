@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GestionnaireErreurs {
 
-    @ExceptionHandler({MaterielIntrouvableException.class, ReservationIntrouvableException.class})
+    @ExceptionHandler({ MaterielIntrouvableException.class, ReservationIntrouvableException.class })
     public ResponseEntity<Erreur> ressourceIntrouvable(RuntimeException exception) {
         return reponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
@@ -46,6 +46,11 @@ public class GestionnaireErreurs {
     @ExceptionHandler(RafraichissementRefuseException.class)
     public ResponseEntity<Erreur> rafraichissementRefuse(RafraichissementRefuseException exception) {
         return reponse(HttpStatus.UNAUTHORIZED, exception.getMessage());
+    }
+
+    @ExceptionHandler(IdentifiantDejaPrisException.class)
+    public ResponseEntity<Erreur> identifiantDejaPris(IdentifiantDejaPrisException exception) {
+        return reponse(HttpStatus.CONFLICT, exception.getMessage());
     }
 
     private ResponseEntity<Erreur> reponse(HttpStatus statut, String message) {

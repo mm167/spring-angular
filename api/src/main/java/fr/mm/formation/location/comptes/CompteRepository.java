@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CompteRepository extends JpaRepository<Compte, Long> {
 
     Optional<Compte> findByIdentifiant(String identifiant);
+    boolean existsByIdentifiant(String identifiant);
 }
